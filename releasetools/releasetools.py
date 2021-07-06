@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020 The LineageOS Project
+# Copyright (C) 2021 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,28 +14,10 @@
 # limitations under the License.
 #
 
-""" Custom OTA commands for samsung_msm8974 devices """
-
 import common
-import re
-import os
+import struct
 
 def FullOTA_PostValidate(info):
-  info.script.AppendExtra('run_program("/sbin/e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
-  info.script.AppendExtra('run_program("/tmp/install/bin/resize2fs_static", "/dev/block/platform/msm_sdcc.1/by-name/system");');
-  info.script.AppendExtra('run_program("/sbin/e2fsck", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
-
-def FullOTA_Assertions(info):
-  AddBootloaderAssertion(info, info.input_zip)
-
-def IncrementalOTA_Assertions(info):
-  AddBootloaderAssertion(info, info.target_zip)
-
-def AddBootloaderAssertion(info, input_zip):
-  android_info = input_zip.read("OTA/android-info.txt").decode('UTF-8')
-  m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", android_info)
-  if m:
-    bootloaders = m.group(1).split("|")
-    if "*" not in bootloaders:
-      info.script.AssertSomeBootloader(*bootloaders)
-    info.metadata["pre-bootloader"] = m.group(1)
+    info.script.AppendExtra('run_program("/tmp/install/bin/e2fsck_static", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');
+    info.script.AppendExtra('run_program("/tmp/install/bin/resize2fs_static", "-f", "/dev/block/platform/msm_sdcc.1/by-name/system");');
+    info.script.AppendExtra('run_program("/tmp/install/bin/e2fsck_static", "-fy", "/dev/block/platform/msm_sdcc.1/by-name/system");');

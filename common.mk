@@ -328,6 +328,3 @@ PRODUCT_COPY_FILES += \
 
 # System Properties
 $(call inherit-product, device/samsung/msm8974-common/system_prop.mk)
-
-# Get non-open-source specific aspects
-$(call inherit-product, vendor/samsung/msm8974-common/msm8974-common-vendor.mk)
